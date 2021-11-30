@@ -15,9 +15,33 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+//Get Requests
+app.get('/', (req, res) => {
+  res.render("home", {HomeContent: homeStartingContent});
+});
+
+app.get('/about', (req, res) => {
+  res.render("about", {AboutContent: aboutContent});
+});
+
+app.get('/contact', (req, res) => {
+  res.render("contact", {ContactContent: contactContent});
+});
+
+app.get('/compose', (req, res) => {
+  res.render("compose");
+});
 
 
+//Post requests
+app.post('/', (req, res) => {
 
+  var title = req.body.Title;
+  var postBody = req.body.postBody;
+
+  console.log(title);
+  console.log(postBody);
+})
 
 
 
