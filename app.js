@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const _ = require("lodash");
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
@@ -10,14 +11,17 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 
 const app = express();
 
+
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
+let posts = [];
+
 //Get Requests
 app.get('/', (req, res) => {
-  res.render("home", {HomeContent: homeStartingContent});
+  res.render("home", {HomeContent: homeStartingContent, posts: posts});
 });
 
 app.get('/about', (req, res) => {
@@ -32,15 +36,31 @@ app.get('/compose', (req, res) => {
   res.render("compose");
 });
 
+app.get('/posts/:postId', function (req, res) {
+  posts.forEach((post) => {
+    if(_.lowerCase(post.title) === _.lowerCase(req.params.postId)){
+      res.render("post", {postTitle: post.title, postContent: post.content});
+      console.log("match found");
+    }else {
+      console.log("Not a match");
+    }
+    
+  });
+});
+
 
 //Post requests
 app.post('/', (req, res) => {
 
-  var title = req.body.Title;
-  var postBody = req.body.postBody;
+  const post = {
+    title: req.body.Title,
+    content: req.body.postBody
+  };
 
-  console.log(title);
-  console.log(postBody);
+  posts.push(post);
+
+  res.redirect("/");
+  
 })
 
 
